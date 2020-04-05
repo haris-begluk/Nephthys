@@ -29,12 +29,6 @@ namespace Nephthys.Admin.Controllers
 
             return await _userManager.Users.Include(u => u.Claims).FirstOrDefaultAsync(u => u.Email.Equals(email)); ;
         }
-        public async Task<ApplicationUser> GetUser(string username, string password)
-        {
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-                return null;
 
-            return await _signInManager.valida
-        }
     }
 }
