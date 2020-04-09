@@ -97,7 +97,9 @@ namespace Nephthys.Admin.Data.DataHelpers
                         {
                             obj = new ApplicationUser
                             {
-                                UserName = user.Username
+                                UserName = user.Username,
+                                Email = user.Claims.FirstOrDefault(c => c.Type.Equals("email")).Value,
+                                EmailConfirmed = true
                             };
                             var result = userManager.CreateAsync(obj, user.Password).Result;
                             if (!result.Succeeded)

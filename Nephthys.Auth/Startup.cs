@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using IdentityServer4.Configuration;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nephthys.Admin.Data.DataHelpers;
 using Nephthys.Admin.Data.Entities;
+using System;
 using System.Reflection;
 
 namespace Nephthys.Auth
@@ -32,13 +34,30 @@ namespace Nephthys.Auth
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(ConnString));
 
-            services.AddIdentity<ApplicationUser, ApplicationRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>(
+                options =>
+                {
+                    options.SignIn.RequireConfirmedEmail = true;
+                })
                .AddEntityFrameworkStores<ApplicationDbContext>()
                .AddDefaultTokenProviders();
 
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
-            var builder = services.AddIdentityServer()
-                .AddTestUsers(TestUsers.Users);
+            var builder = services.AddIdentityServer(options =>
+            {
+                options.Events.RaiseErrorEvents = true;
+                options.Events.RaiseInformationEvents = true;
+                options.Events.RaiseFailureEvents = true;
+                options.Events.RaiseSuccessEvents = true;
+                options.UserInteraction.LoginUrl = "/Account/Login";
+                options.UserInteraction.LogoutUrl = "/Account/Logout";
+                options.Authentication = new AuthenticationOptions()
+                {
+                    CookieLifetime = TimeSpan.FromHours(10), // ID server cookie timeout set to 10 hours
+                    CookieSlidingExpiration = true
+                };
+            })
+               .AddAspNetIdentity<ApplicationUser>();
 
             builder.AddConfigurationStore(options =>
             {
@@ -53,11 +72,6 @@ namespace Nephthys.Auth
                     builder.UseSqlServer(ConnString,
                     options => options.MigrationsAssembly(migrationsAssembly));
             });
-            //.AddInMemoryIdentityResources(Config.Ids)
-            //.AddInMemoryApiResources(Config.Apis)
-            //.AddInMemoryClients(Config.Clients)
-            //.AddTestUsers(TestUsers.Users);
-
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();
         }

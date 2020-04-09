@@ -10,7 +10,7 @@ using Nephthys.Admin.Data.Entities;
 namespace Nephthys.Auth.Migrations.Admin
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200409100654_Initial")]
+    [Migration("20200409114104_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
