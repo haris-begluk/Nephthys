@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Nephthys.Admin.Migrations
+namespace Nephthys.Auth.Migrations.Admin
 {
     public partial class Initial : Migration
     {

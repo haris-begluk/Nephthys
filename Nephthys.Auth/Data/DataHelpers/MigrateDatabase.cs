@@ -1,11 +1,15 @@
-﻿using IdentityServer4.EntityFramework.DbContexts;
+﻿using IdentityModel;
+using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Nephthys.Admin.Data.Entities;
 using Nephthys.Auth;
 using System;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Nephthys.Admin.Data.DataHelpers
 {
@@ -16,6 +20,7 @@ namespace Nephthys.Admin.Data.DataHelpers
             Console.WriteLine("Start migrations...");
             app.ExecuteMigrations<ConfigurationDbContext>();
             app.ExecuteMigrations<PersistedGrantDbContext>();
+            app.ExecuteMigrations<ApplicationDbContext>();
             Console.WriteLine("Migrations finished...");
             Console.WriteLine("Seeding database...");
             app.SeedData();
@@ -79,6 +84,37 @@ namespace Nephthys.Admin.Data.DataHelpers
                     Console.WriteLine("ApiResources already populated");
                 }
             }
+
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                if (!userManager.Users.Any())
+                {
+                    foreach (var user in Config.GetTestUsers().ToList())
+                    {
+                        var obj = userManager.FindByNameAsync(user.Username).Result;
+                        if (obj == null)
+                        {
+                            obj = new ApplicationUser
+                            {
+                                UserName = user.Username
+                            };
+                            var result = userManager.CreateAsync(obj, user.Password).Result;
+                            if (!result.Succeeded)
+                            {
+                                throw new Exception(result.Errors.First().Description);
+                            }
+
+                            result = userManager.AddClaimsAsync(obj, user.Claims).Result;
+                            if (!result.Succeeded)
+                            {
+                                throw new Exception(result.Errors.First().Description);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
+

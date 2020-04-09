@@ -1,14 +1,12 @@
-﻿// Copyright (c) Brock Allen & Dominick Baier. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
-
-
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nephthys.Admin.Data.DataHelpers;
+using Nephthys.Admin.Data.Entities;
 using System.Reflection;
 
 namespace Nephthys.Auth
@@ -23,7 +21,7 @@ namespace Nephthys.Auth
         {
             Environment = environment;
             Configuration = configuration;
-            ConnString = Configuration.GetConnectionString("AuthDB");
+            ConnString = Configuration.GetConnectionString("AuthServer");
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -31,9 +29,17 @@ namespace Nephthys.Auth
 
             // uncomment, if you want to add an MVC-based UI
             services.AddControllersWithViews();
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(ConnString));
+
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
+               .AddEntityFrameworkStores<ApplicationDbContext>()
+               .AddDefaultTokenProviders();
+
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
             var builder = services.AddIdentityServer()
                 .AddTestUsers(TestUsers.Users);
+
             builder.AddConfigurationStore(options =>
             {
                 options.ConfigureDbContext = builder =>
