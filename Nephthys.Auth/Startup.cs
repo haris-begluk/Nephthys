@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,6 +32,8 @@ namespace Nephthys.Auth
 
             // uncomment, if you want to add an MVC-based UI
             services.AddControllersWithViews();
+            services.AddRazorPages();
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(ConnString));
 
@@ -41,7 +44,12 @@ namespace Nephthys.Auth
                 })
                .AddEntityFrameworkStores<ApplicationDbContext>()
                .AddDefaultTokenProviders();
-
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = $"/Identity/Account/Login";
+                options.LogoutPath = $"/Identity/Account/Logout";
+                options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+            });
             var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
             var builder = services.AddIdentityServer(options =>
             {
@@ -94,6 +102,7 @@ namespace Nephthys.Auth
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
+                endpoints.MapRazorPages();
             });
         }
     }
