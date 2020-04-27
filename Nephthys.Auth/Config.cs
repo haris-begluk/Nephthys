@@ -140,7 +140,7 @@ namespace Nephthys.Auth
         {
             return new List<TestUser>
             {
-                new TestUser{SubjectId = "818727", Username = "alice", Password = "P@$$w0rd!!!",
+                new TestUser{SubjectId = "d860efca-22d9-47fd-8249-791ba61b07c7", Username = "alice", Password = "P@$$w0rd!!!",
                     Claims =
                     {
                         new Claim(JwtClaimTypes.Name, "Alice Smith"),
@@ -152,7 +152,7 @@ namespace Nephthys.Auth
                         new Claim(JwtClaimTypes.Address, @"{ 'street_address': 'One Hacker Way', 'locality': 'Heidelberg', 'postal_code': 69118, 'country': 'Germany' }", IdentityServer4.IdentityServerConstants.ClaimValueTypes.Json)
                     }
                 },
-                new TestUser{SubjectId = "88421113", Username = "bob", Password = "P@$$w0rd!!!",
+                new TestUser{SubjectId = "b7539694-97e7-4dfe-84da-b4256e1ff5c7", Username = "bob", Password = "P@$$w0rd!!!",
                     Claims =
                     {
                         new Claim(JwtClaimTypes.Name, "Bob Smith"),

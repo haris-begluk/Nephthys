@@ -28,7 +28,6 @@ namespace Nephthys.Auth
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IIdentityServerInteractionService _interaction;
         private readonly IClientStore _clientStore;
-        private readonly ILogger<ExternalController> _logger;
         private readonly IEventService _events;
 
         public ExternalController(
