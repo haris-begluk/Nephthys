@@ -17,7 +17,8 @@ namespace Nephthys.Auth
         {
             return new List<ApiResource>
             {
-                new ApiResource("resourceApi", "API Application")
+                new ApiResource("nephthys-api", "Nephthys Api")
+                { ApiSecrets = { new Secret("A0906E90-ED48-47FD-023F-08D7D9719801".Sha256()) } }
             };
         }
 
@@ -36,7 +37,26 @@ namespace Nephthys.Auth
         public static IEnumerable<Client> GetClients()
         {
             return new List<Client>
-            {
+            {   new Client{
+                    ClientId ="postman-api",
+                    ClientName = "Postman Test Client",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    AllowAccessTokensViaBrowser = true,
+                    RedirectUris = { "https://www.getpostman.com/oauth2/callback" },
+                    PostLogoutRedirectUris = { "https://www.getpostman.com" },
+                    AllowedCorsOrigins = { "https://www.getpostman.com" },
+                    EnableLocalLogin = true,
+                    AllowedScopes =
+                {
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    IdentityServerConstants.StandardScopes.Profile,
+                    "nephthys-api"
+                },
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+            },
                 new Client
                 {
                     ClientId = "clientApp",

@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nephthys.Admin.Data.DataHelpers;
 using Nephthys.Admin.Data.Entities;
+using Nephthys.Api.Extensions;
 using System;
 using System.Reflection;
 
@@ -82,6 +83,8 @@ namespace Nephthys.Auth
             });
             // not recommended for production - you need to store your key material somewhere secure
             builder.AddDeveloperSigningCredential();
+            services.ConfigureCookiePolicy();
+
         }
 
         public void Configure(IApplicationBuilder app)
@@ -96,6 +99,7 @@ namespace Nephthys.Auth
             app.UseRouting();
 
             app.UseIdentityServer();
+            app.UseCookiePolicy();
 
             // uncomment, if you want to add MVC
             app.UseAuthorization();
