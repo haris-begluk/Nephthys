@@ -6,11 +6,12 @@
              mc:Ignorable="d"
              x:Class="Nephthys.MainPage">
 
-    <StackLayout>
-        <!-- Place new controls here -->
-        <Label Text="Welcome to Xamarin.Forms!" 
-           HorizontalOptions="Center"
-           VerticalOptions="CenterAndExpand" />
+    <StackLayout Padding="20">
+        <Button Text="Login" x:Name="Login" Padding="20" />
+        <Button Text="Call Api" x:Name="CallApi" Padding="20" />
+        <Label x:Name="OutputText"
+                VerticalOptions="EndAndExpand"
+                HorizontalOptions="FillAndExpand" />
     </StackLayout>
 
 </ContentPage>

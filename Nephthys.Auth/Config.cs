@@ -56,103 +56,31 @@ namespace Nephthys.Auth
                     {
                         new Secret("secret".Sha256())
                     },
-            },
-                new Client
+            },new Client
                 {
-                    ClientId = "clientApp",
+                    ClientId = "xamarin.mobile",
+                    ClientName = "Xamarin Mobile (Code with PKCE)",
 
-                    // no interactive user, use the clientid/secret for authentication
-                    AllowedGrantTypes = GrantTypes.ClientCredentials,
-
-                    // secret for authentication
-                    ClientSecrets =
-                    {
-                        new Secret("secret".Sha256())
-                    },
-
-                    // scopes that client has access to
-                    AllowedScopes = { "resourceApi" }
-                },
-
-                // OpenID Connect implicit flow client (MVC)
-                new Client
-                {
-                    ClientId = "mvc",
-                    ClientName = "MVC Client",
-                    AllowedGrantTypes = GrantTypes.Hybrid,
-
-                    ClientSecrets =
-                    {
-                        new Secret("secret".Sha256())
-                    },
-
-                    RedirectUris = { $"{spaClientUrl}/signin-oidc" },
-                    PostLogoutRedirectUris = { $"{spaClientUrl}/signout-callback-oidc" },
-                    AllowedScopes =
-                    {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        "resourceApi"
-                    },
-                    AllowOfflineAccess = true
-                },
-                new Client
-                {
-                    ClientId = "spaClient",
-                    ClientName = "SPA Client",
-                    AllowedGrantTypes = GrantTypes.Implicit,
-                    AllowAccessTokensViaBrowser = true,
-
-                    RedirectUris = { $"{spaClientUrl}/callback" },
-                    PostLogoutRedirectUris = { $"{spaClientUrl}/" },
-                    AllowedCorsOrigins = { $"{spaClientUrl}" },
-                    AllowedScopes =
-                    {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        "resourceApi"
-                    }
-                },
-                 new Client
-                {
-                    ClientId = "spaCodeClient",
-                    ClientName = "SPA Code Client",
-                    AccessTokenType = AccessTokenType.Jwt,
-                    // RequireConsent = false,
-                    AccessTokenLifetime = 330,// 330 seconds, default 60 minutes
-                    IdentityTokenLifetime = 30,
+                    RedirectUris = { "https://notused","xamarinformsclients://callback"  },
+                    PostLogoutRedirectUris = { "https://notused" },
 
                     RequireClientSecret = false,
+                    RequireConsent = false,
+
                     AllowedGrantTypes = GrantTypes.Code,
                     RequirePkce = true,
+                    AllowedScopes = {
+                IdentityServerConstants.StandardScopes.OpenId,
+                IdentityServerConstants.StandardScopes.Profile,
+                "nephthys-api"
 
-                    AllowAccessTokensViaBrowser = true,
-                    RedirectUris = new List<string>
-                    {
-                        $"{spaClientUrl}/callback",
-                        $"{spaClientUrl}/silent-renew.html",
-                        "https://localhost:4200",
-                        "https://localhost:4200/silent-renew.html"
-                    },
-                    PostLogoutRedirectUris = new List<string>
-                    {
-                        $"{spaClientUrl}/unauthorized",
-                        $"{spaClientUrl}",
-                        "https://localhost:4200/unauthorized",
-                        "https://localhost:4200"
-                    },
-                    AllowedCorsOrigins = new List<string>
-                    {
-                        $"{spaClientUrl}",
-                        "https://localhost:4200"
-                    },
-                    AllowedScopes = new List<string>
-                    {
-                        IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile,
-                        "resourceApi"
-                    }
                 },
+                    //AllowedScopes = { "openid", "profile", "email", "api" },
+
+                    AllowOfflineAccess = true,
+                    RefreshTokenUsage = TokenUsage.ReUse
+                }
+
             };
         }
 

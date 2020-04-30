@@ -29,6 +29,7 @@ namespace Nephthys.Api.Controllers
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();
+            _logger.LogInformation("Call to WeatherForecast was made, working on reuest...");
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
