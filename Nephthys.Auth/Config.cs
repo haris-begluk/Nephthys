@@ -32,7 +32,7 @@ namespace Nephthys.Auth
             };
         }
 
-        private static string spaClientUrl = "https://localhost:44311";
+        //private static string spaClientUrl = "https://localhost:44311";
 
         public static IEnumerable<Client> GetClients()
         {

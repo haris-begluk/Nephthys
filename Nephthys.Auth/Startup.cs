@@ -60,6 +60,8 @@ namespace Nephthys.Auth
                 options.Events.RaiseSuccessEvents = true;
                 options.UserInteraction.LoginUrl = "/Account/Login";
                 options.UserInteraction.LogoutUrl = "/Account/Logout";
+                //options.IssuerUri = "https://10.0.2.2:44389"; //Set this to avoid auth errors for android app
+                //options.IssuerUri = "https://10.0.0.5:44389";
                 options.Authentication = new AuthenticationOptions()
                 {
                     CookieLifetime = TimeSpan.FromHours(10), // ID server cookie timeout set to 10 hours

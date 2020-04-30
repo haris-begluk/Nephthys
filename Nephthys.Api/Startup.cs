@@ -34,7 +34,7 @@ namespace Nephthys.Api
                     options.ApiName = "nephthys-api";
                     options.ApiSecret = "A0906E90-ED48-47FD-023F-08D7D9719801";
                     options.RequireHttpsMetadata = false;
-
+                    
                 });
         }
 

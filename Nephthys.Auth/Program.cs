@@ -53,6 +53,7 @@ namespace Nephthys.Auth
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                    //webBuilder.UseUrls("https://10.0.0.5:44389");
                     webBuilder.UseSerilog();
                 });
     }
