@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Builder;
@@ -11,7 +13,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace Nephthys.Api
 {
@@ -38,9 +42,36 @@ namespace Nephthys.Api
 
                 });
             // Register the Swagger generator, defining 1 or more Swagger documents
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(options =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Nephthys Resource Api", Version = "v1" });
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Nephthys Resource Api", Version = "v1" });
+
+                string xmlFile = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath);
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Name = "User Authentication Token",
+                    Type = SecuritySchemeType.OAuth2,
+                    Flows = new OpenApiOAuthFlows()
+                    {
+                        AuthorizationCode = new OpenApiOAuthFlow()
+                        {
+                            TokenUrl = new Uri("https://localhost:44389/connect/token"),
+                            AuthorizationUrl = new Uri("https://localhost:44389/connect/authorize"),
+                            Scopes = new Dictionary<string, string>
+                        {
+                            { "openid profile nephthys-api", "Scopes for the access token request" }
+                        }
+                        },
+                    },
+                    Description = "Authentication using OAuth2 \"bearer {token}\""
+
+                });
+                options.OperationFilter<SecurityRequirementsOperationFilter>();
+                options.OperationFilter<AppendAuthorizeToSummaryOperationFilter>();
+
             });
         }
 
@@ -58,15 +89,16 @@ namespace Nephthys.Api
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
             // specifying the Swagger JSON endpoint.
-            app.UseSwaggerUI(c =>
+            app.UseSwaggerUI(options =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Nephthys Resource Api");
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Nephthys Resource Api");
+                options.OAuthClientId("swagger-api");
+                options.OAuth2RedirectUrl("https://localhost:44356/swagger/oauth2-redirect.html");
             });
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

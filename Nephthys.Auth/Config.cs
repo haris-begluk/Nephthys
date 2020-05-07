@@ -46,6 +46,23 @@ namespace Nephthys.Auth
                     PostLogoutRedirectUris = { "https://www.getpostman.com" },
                     AllowedCorsOrigins = { "https://www.getpostman.com" },
                     EnableLocalLogin = true,
+                    AllowedScopes = {
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    IdentityServerConstants.StandardScopes.Profile,
+                    "nephthys-api" },
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256())
+                    },
+            },new Client{
+                    ClientId ="swagger-api",
+                    ClientName = "Swagger Test Client",
+                    AllowedGrantTypes = GrantTypes.Code,
+                    AllowAccessTokensViaBrowser = true,
+                    RedirectUris = { "https://localhost:44356/swagger/oauth2-redirect.html" },
+                    PostLogoutRedirectUris = { "https://localhost:44356/swagger" },
+                    AllowedCorsOrigins = { "https://localhost:44356" },
+                    EnableLocalLogin = true,
                     AllowedScopes =
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
