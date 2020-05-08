@@ -9,12 +9,15 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.OpenApi.Models;
+using Nephthys.Api.Entities;
+using Nephthys.Api.Helpers;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace Nephthys.Api
@@ -31,6 +34,8 @@ namespace Nephthys.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<NephthysDbContext>(options =>
+               options.UseSqlServer(Configuration.GetConnectionString("NephthysDB")).EnableSensitiveDataLogging());
             services.AddControllers();
             services.AddAuthentication(IdentityServerAuthenticationDefaults.AuthenticationScheme)
                 .AddIdentityServerAuthentication(options =>
@@ -82,7 +87,7 @@ namespace Nephthys.Api
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.MigrateAndGenerateData();
             app.UseHttpsRedirection();
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
